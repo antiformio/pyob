@@ -1,5 +1,6 @@
 import operator
 
+
 class Camper:
 
     max_name_len = 0
@@ -16,10 +17,11 @@ class Camper:
 
     def display(self):
         return Camper.template.format(
-            name = self.name,
-            name_len = self.max_name_len,
-            paid = self.paid,
+            name=self.name,
+            name_len=self.max_name_len,
+            paid=self.paid,
         )
+
 
 class Budget:
     """
@@ -37,19 +39,23 @@ class Budget:
 
     def contribute(self, name, amount):
         if name not in self._campers:
-            raise LookupError("Name not in budget")
+            self._campers.update({name: Camper(name, amount)})
         self._campers[name].pay(amount)
 
     def individual_share(self):
         return self.total() / len(self._campers)
+
+    def include(self, name, contribution=0.0):
+        self._campers.update({name: Camper(name, contribution)})
 
     def report(self):
         """report displays names and amounts due or owed"""
         share = self.individual_share()
         heading_tpl = 'Total: $ {:.2f}; individual share: $ {:.2f}'
         print(heading_tpl.format(self.total(), share))
-        print("-"* 42)
-        sorted_campers = sorted(self._campers.values(), key=operator.attrgetter('paid'))
+        print("-" * 42)
+        sorted_campers = sorted(self._campers.values(),
+                                key=operator.attrgetter('paid'))
         for camper in sorted_campers:
             balance = f'balance: $ {camper.paid - share:7.2f}'
             print(camper.display(), balance, sep=', ')
